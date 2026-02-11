@@ -1,7 +1,7 @@
 Projeto de Informática
 # 👵👴 [Busca ILPL]
 
-![Badge de Status](https://img.shields.io/badge/Status-Finalizado-yellow)
+![Badge de Status](https://img.shields.io/badge/Status-Finalizado-green)
 ![Badge da Licença](https://img.shields.io/badge/License-MIT-blue)
 
 > Um sistema web para localizar e agregar informações sobre lares de idosos e casas de repouso utilizando a inteligência do Google.
