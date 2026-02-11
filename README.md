@@ -8,14 +8,6 @@ Projeto de Informática
 
 ---
 
-## 📸 Screenshots
-
-<div align="center">
-  <img src="caminho/para/sua/imagem.png" alt="Tela Principal" width="700">
-</div>
-
----
-
 ## 📝 Sobre o Projeto
 
 O **Busca ILPL** é uma aplicação web desenvolvida para facilitar a busca por instituições de longa permanência para idosos. O sistema se conecta à API do Google para buscar estabelecimentos registrados, trazendo informações vitais de forma centralizada.
