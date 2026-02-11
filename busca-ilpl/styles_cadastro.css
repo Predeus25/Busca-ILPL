@@ -1,0 +1,144 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('enfermeira-de-tiro-medio-e-homem-posando.jpg'); /* Substitua pelo caminho da sua imagem */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+
+.cadastro-container {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  color: white;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.dois {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.input-wrapper {
+  width: 100%;
+}
+
+.sexo {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  background-color: white;
+  color: black;
+  font-size: 16px;
+  height: 48px; 
+}
+
+.sexo label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.dois input {
+  width: 100%;
+}
+
+
+input, textarea, select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+
+input[type="file"] {
+  padding: 6px;
+  border-radius: 0;
+  background-color: white;
+}
+
+input[type="submit"]{
+  width: 48%;
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  background-color: #2d7eb4;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover{
+  background-color: #3743e9;
+}
+
+input[type="button"]{
+  width: 48%;
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  background-color: #2d7eb4;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+input[type="button"]:hover{
+  background-color: #3743e9;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+button {
+  width: 48%;
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  background-color: #2d7eb4;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+button:hover {
+  background-color: #3743e9;
+}
+
+
+.hidden {
+  display: none;
+}

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Busca ILPI / Pesquisa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles_pesquisa.css">
+
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXD7LWP09K08PzlkYXCpO-R9ST8awR3cM&loading=async&libraries=places,marker&callback=initMap">
+  </script>
+
+  <style>
+    /* Estilos gerais do modal (baseados no seu styles.css, mas garantindo rolagem) */
+    #modalBox {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1000; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+        align-items: center; /* Center vertically */
+        justify-content: center; /* Center horizontally */
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto; /* Auto margin for centering */
+        padding: 25px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more specific */
+        max-width: 700px; /* Max width */
+        border-radius: 10px;
+        position: relative;
+        /* --- Correção para Rolagem --- */
+        max-height: 85vh; /* Altura máxima antes de rolar */
+        overflow-y: auto; /* Habilita rolagem vertical */
+        /* --- Fim da Correção --- */
+    }
+    .modal-close {
+        color: #aaa;
+        position: absolute; /* Position relative to modal-content */
+        top: 10px;
+        right: 20px;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .modal-close:hover,
+    .modal-close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Estilos adicionais para a galeria de imagens no modal */
+    #modalImageContainer {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      margin-bottom: 1rem;
+      padding-bottom: 10px;
+      max-height: 300px;
+      background-color: #f0f0f0;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    #modalImageContainer img {
+      max-height: 280px;
+      width: auto;
+      border-radius: 4px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 1px solid #ccc;
+    }
+    #modalImage {
+        display: none;
+    }
+    /* Estilo para a seção de contato */
+    #modalContato {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+        display: none; /* Começa escondido */
+    }
+    #modalContato p {
+        margin: 0.5rem 0;
+        font-size: 0.95rem;
+    }
+    #modalContato strong {
+        color: #333;
+    }
+    .loading-spinner {
+        border: 4px solid #f3f3f3; /* Light grey */
+        border-top: 4px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+  </style>
+
+</head>
+<body>
+  <!-- Header baseado na página inicial -->
+  <header>
+    <div class="header-container">
+      <img src="Logo-Tipo.png" width="25px" alt="Logo">
+      <div class="menu">
+        <button id="sidebarToggle" class="sidebar-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Barra lateral -->
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <button id="sidebarClose" class="sidebar-close">&times;</button>
+    </div>
+    <div class="sidebar-content">
+      <nav>
+        <ul>         
+          <li><a href="Pag_Inicial_2.html">Página Inicial</a></li>
+          <li><a href="Pequisa.html" class="active">Pesquisa</a></li>
+          <li><a href="Dados.php">Dados</a></li>
+          <br/><br/><br/>
+          <li><a href="logout.php">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Overlay para quando a barra lateral estiver aberta -->
+  <div id="overlay" class="overlay"></div>
+
+  <div class="container">
+    <h1>Busca ILPL</h1>
+
+    <label for="estado">Selecione o estado:</label>
+    <select id="estado" onchange="carregarCidades()">
+      <option value="">Escolha um estado</option>
+      <option value="SP">São Paulo</option>
+      <option value="MG">Minas Gerais</option>
+    </select>
+    <label for="cidade">Selecione a cidade:</label>
+    <select id="cidade" onchange="mostrarLocais()">
+      <option value="">Escolha uma cidade</option>
+    </select>
+    <div id="resultado">
+      <br/>
+      <h2>Locais encontrados:</h2>
+      <table id="tabela-locais">
+        <thead>
+          <tr>
+            <th>Foto Principal</th>
+            <th>Nome do Local</th>
+            <th>Endereço</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modalBox" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <span class="modal-close" onclick="fecharModal()" aria-label="Fechar modal">&times;</span>
+      <div id="modalImageContainer"></div>
+      <img id="modalImage" src="" alt="Imagem do local" style="display: none;" />
+      <h2 id="modalNome"></h2>
+      <p id="modalEndereco" class="modal-info"></p>
+      <p class="modal-info">⭐ Avaliação: <span id="modalAvaliacao">N/A</span></p>
+      <p class="modal-info">📊 Total de Avaliações: <span id="modalTotalAvaliacoes">N/A</span></p>
+      <p class="modal-descricao" id="descricaoLocal"></p>
+      <div id="modalMap" style="height: 250px; width: 100%; margin-top: 1rem; border-radius: 8px;"></div>
+
+      <!-- Botão Ver Contato e Seção de Contato -->
+      <button class="btn-agendar" id="btnAgendarModal">Ver Contato</button>
+      <div id="modalContato">
+        <h3>Informações de Contato:</h3>
+        <p><strong>Telefone:</strong> <span id="modalTelefone">Buscando...</span></p>
+        <p><strong>Email:</strong> <span id="modalEmail">Buscando...</span></p>
+        <p id="contatoErro" style="color: red; display: none;"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Funcionalidade da barra lateral
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const sidebarClose = document.getElementById('sidebarClose');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+
+      // Abrir a barra lateral
+      sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Impede rolagem do body
+      });
+
+      // Fechar a barra lateral (botão X)
+      sidebarClose.addEventListener('click', function() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = ''; // Restaura rolagem do body
+      });
+
+      // Fechar a barra lateral (clicando no overlay)
+      overlay.addEventListener('click', function() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = ''; // Restaura rolagem do body
+      });
+    });
+
+    const apiKey = 'AIzaSyDXD7LWP09K08PzlkYXCpO-R9ST8awR3cM';
+    let map;
+    let infoWindow;
+    let advancedMarkerElement;
+    let currentPlaceId = null;
+
+    async function initMap() {
+      const { Map } = await google.maps.importLibrary("maps");
+      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+      map = new Map(document.getElementById("modalMap"), {
+        center: { lat: -14.235, lng: -51.925 },
+        zoom: 4,
+        mapId: 'DEMO_MAP_ID'
+      });
+      advancedMarkerElement = new AdvancedMarkerElement({ map: map, position: null });
+      infoWindow = new google.maps.InfoWindow();
+      console.log("Mapa inicializado.");
+
+      // Adiciona listener ao botão após o DOM estar pronto
+      document.getElementById('btnAgendarModal').addEventListener('click', buscarEMostrarContato);
+    }
+
+    const cidadesPorEstado = {
+      SP: [ "São Paulo", "Guarulhos", "Campinas", "São Bernardo do Campo", "Santo André", "Osasco", "Sorocaba", "Ribeirão Preto", "São José dos Campos", "São José do Rio Preto", "Santos", "Cajuru" ],
+      MG: [ "Belo Horizonte", "Uberlândia", "Contagem", "Juiz de Fora", "Montes Claros", "Betim", "Uberaba", "Ribeirão das Neves", "Governador Valadares", "Divinópolis", "Ipatinga", "Iturama" ]
+    };
+
+    function carregarCidades() {
+      const estado = document.getElementById("estado").value;
+      const cidadeSelect = document.getElementById("cidade");
+      cidadeSelect.innerHTML = '<option value="">Escolha uma cidade</option>';
+      if (estado && cidadesPorEstado[estado]) {
+        cidadesPorEstado[estado].forEach(cidade => {
+          const option = document.createElement("option");
+          option.value = cidade;
+          option.textContent = cidade;
+          cidadeSelect.appendChild(option);
+        });
+      }
+      document.querySelector("#tabela-locais tbody").innerHTML = '';
+    }
+
+    async function mostrarLocais() {
+      const estado = document.getElementById("estado").value;
+      const cidade = document.getElementById("cidade").value;
+      if (!estado || !cidade) return;
+
+      const url = `buscar_google_places_updated.php?estado=${encodeURIComponent(estado)}&cidade=${encodeURIComponent(cidade)}`;
+      const tbody = document.querySelector("#tabela-locais tbody");
+      tbody.innerHTML = '<tr><td colspan="4">Buscando...</td></tr>';
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        tbody.innerHTML = '';
+
+        if (data.error) {
+          console.error("Erro da API Backend:", data.error, data.details);
+          tbody.innerHTML = `<tr><td colspan="4">Erro ao buscar locais: ${data.error}</td></tr>`;
+          return;
+        }
+
+        if (!data.places || data.places.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4">Nenhum lar encontrado para essa cidade.</td></tr>';
+          return;
+        }
+
+        for (const place of data.places) {
+          const nome = place.displayName?.text || 'Nome não disponível';
+          const endereco = place.formattedAddress || 'Endereço não disponível';
+          const location = place.location;
+          const placeId = place.id;
+
+          let imagensUrls = [];
+          let imagemPrincipalUrl = 'https://via.placeholder.com/100?text=Sem+Imagem';
+          if (place.photos && place.photos.length > 0) {
+            imagemPrincipalUrl = `https://places.googleapis.com/v1/${place.photos[0].name}/media?key=${apiKey}&maxWidthPx=100`;
+            imagensUrls = place.photos.map(photo =>
+              `https://places.googleapis.com/v1/${photo.name}/media?key=${apiKey}&maxWidthPx=800`
+            );
+          }
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td data-label="Foto Principal"><img src="${imagemPrincipalUrl}" alt="Imagem principal do local ${nome}" loading="lazy" /></td>
+            <td data-label="Nome">${nome}</td>
+            <td data-label="Endereço">${endereco}</td>
+            <td data-label="Ação"><button onclick='abrirModal(${JSON.stringify(place)}, ${JSON.stringify(imagensUrls)})'>Conhecer</button></td>
+          `;
+          tbody.appendChild(tr);
+
+          // Salva no banco, incluindo google_place_id
+          fetch('lares_idosos.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, endereco, cidade, estado, imagens: imagensUrls, google_place_id: placeId })
+          })
+          .then(res => res.json())
+          .then(saveResult => {
+              if(saveResult.success){
+                  console.log(`Lar '${nome}' salvo/atualizado com ID: ${saveResult.lar_id}`);
+              } else {
+                  console.log(`Lar '${nome}': ${saveResult.message || saveResult.error}`);
+              }
+          })
+          .catch(err => console.error("Erro ao salvar no DB:", err));
+        }
+      } catch (error) {
+        tbody.innerHTML = '<tr><td colspan="4">Erro ao processar a busca. Verifique o console.</td></tr>';
+        console.error("Erro no fetch ou processamento:", error);
+      }
+    }
+
+    async function abrirModal(placeData, imagensUrls) {
+      if (!map || !advancedMarkerElement) {
+        console.error("Mapa ou marcador não inicializado.");
+        alert("Erro ao carregar o mapa. Tente novamente.");
+        return;
+      }
+
+      currentPlaceId = placeData.id;
+      if (!currentPlaceId) {
+          console.error("Erro: Google Place ID não encontrado nos dados do local.");
+      }
+
+      // Reseta e esconde a seção de contato
+      const contatoDiv = document.getElementById('modalContato');
+      const telefoneSpan = document.getElementById('modalTelefone');
+      const emailSpan = document.getElementById('modalEmail');
+      const erroSpan = document.getElementById('contatoErro');
+      contatoDiv.style.display = 'none';
+      telefoneSpan.textContent = 'Buscando...'; // Reset text
+      emailSpan.textContent = 'Buscando...'; // Reset text
+      erroSpan.style.display = 'none';
+      erroSpan.textContent = '';
+
+      document.getElementById("modalBox").style.display = "flex";
+
+      const nome = placeData.displayName?.text || 'Nome não disponível';
+      const endereco = placeData.formattedAddress || 'Endereço não disponível';
+      const avaliacao = placeData.rating ? placeData.rating.toFixed(1) : 'N/A';
+      const totalAvaliacoes = placeData.userRatingCount || 0;
+      const location = placeData.location;
+
+      document.getElementById("modalNome").innerText = nome;
+      document.getElementById("modalEndereco").innerText = endereco;
+      document.getElementById("modalAvaliacao").innerText = avaliacao;
+      document.getElementById("modalTotalAvaliacoes").innerText = totalAvaliacoes;
+      document.getElementById("descricaoLocal").innerText =
+        `Conheça o lar ${nome}, localizado em ${endereco}. Avaliado com ${avaliacao}/5 por ${totalAvaliacoes} usuários. Oferece diversos serviços para bem-estar e qualidade de vida.`;
+
+      const imageContainer = document.getElementById("modalImageContainer");
+      imageContainer.innerHTML = '';
+
+      if (imagensUrls && imagensUrls.length > 0) {
+        imageContainer.style.display = 'flex';
+        document.getElementById('modalImage').style.display = 'none';
+        imagensUrls.forEach(url => {
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = `Imagem de ${nome}`;
+          img.loading = 'lazy';
+          imageContainer.appendChild(img);
+        });
+      } else {
+        imageContainer.innerHTML = '<p>Nenhuma imagem disponível.</p>';
+        imageContainer.style.display = 'block';
+        document.getElementById('modalImage').style.display = 'none';
+      }
+
+      if (location && location.latitude && location.longitude) {
+        const position = { lat: location.latitude, lng: location.longitude };
+        map.setCenter(position);
+        map.setZoom(16);
+        advancedMarkerElement.position = position;
+        advancedMarkerElement.title = nome;
+        document.getElementById("modalMap").style.display = 'block';
+      } else {
+        document.getElementById("modalMap").style.display = 'none';
+        console.warn("Coordenadas não encontradas para:", nome);
+        advancedMarkerElement.position = null;
+      }
+    }
+
+    async function buscarEMostrarContato() {
+        if (!currentPlaceId) {
+            console.error("Não foi possível buscar contato: Google Place ID não definido.");
+            const erroSpan = document.getElementById('contatoErro');
+            erroSpan.textContent = 'Erro interno: ID do local não encontrado.';
+            erroSpan.style.display = 'block';
+            document.getElementById('modalContato').style.display = 'block';
+            return;
+        }
+
+        const contatoDiv = document.getElementById('modalContato');
+        const telefoneSpan = document.getElementById('modalTelefone');
+        const emailSpan = document.getElementById('modalEmail');
+        const erroSpan = document.getElementById('contatoErro');
+
+        contatoDiv.style.display = 'block';
+        telefoneSpan.innerHTML = 'Buscando... <span class="loading-spinner"></span>';
+        emailSpan.innerHTML = 'Buscando... <span class="loading-spinner"></span>';
+        erroSpan.style.display = 'none';
+        erroSpan.textContent = '';
+
+        try {
+            console.log(`Buscando contato para place_id: ${currentPlaceId}`); // Log para depuração
+            const response = await fetch(`buscar_contato_lar.php?place_id=${encodeURIComponent(currentPlaceId)}`);
+            const data = await response.json();
+            console.log('Resposta do servidor:', data); // Log para depuração
+
+            if (response.ok && data.success) {
+                telefoneSpan.textContent = data.telefone || 'Não informado';
+                emailSpan.textContent = data.email || 'Não informado';
+            } else {
+                console.error("Erro ao buscar contato (resposta não OK ou data.success false):", data);
+                telefoneSpan.textContent = '-'; // Indicar que não foi possível buscar
+                emailSpan.textContent = '-';
+                erroSpan.textContent = data.message || data.error || 'Não foi possível carregar os contatos. Verifique se estão cadastrados.';
+                erroSpan.style.display = 'block';
+            }
+        } catch (error) {
+            console.error("Falha na requisição de contato (fetch catch):", error);
+            telefoneSpan.textContent = 'Erro';
+            emailSpan.textContent = 'Erro';
+            erroSpan.textContent = 'Falha ao conectar com o servidor para buscar contatos.';
+            erroSpan.style.display = 'block';
+        }
+    }
+
+    function fecharModal() {
+      document.getElementById("modalBox").style.display = "none";
+    }
+  </script>
+</body>
+</html>

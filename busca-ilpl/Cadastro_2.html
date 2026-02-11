@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Busca ILPL / Cadastro - Etapa 2</title>
+  <link rel="stylesheet" href="styles_cadastro.css">
+</head>
+
+<body>
+
+    <div class="cadastro-container">
+        <h2>Dados do Idoso</h2>
+        <form action="Dados_Idoso.php" method="POST" enctype="multipart/form-data">
+
+            <!-- Nome -->
+            <input type="text" name="txtNome" placeholder="Nome completo" required>
+
+            <!-- RG e CPF -->
+            <div class="dois">
+                <input type="text" name="txtRg" placeholder="RG" maxlength="10" oninput="aplicarMascaraRG(this)" required>
+                <input type="text" name="txtCpf" placeholder="CPF" maxlength="14" oninput="aplicarMascaraCPF(this)" required>
+            </div>
+
+        
+            <!-- Tipo Sanguíneo -->
+            <label for="tipo_sanguineo">Tipo sanguíneo:</label>
+            <select name="tipo_sanguineo" required>
+                <option value="">Selecione...</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+
+
+            <!-- Doença pré-existente -->
+            <label for="doenca">Possui alguma doença pré-existente?</label>
+            <select name="doenca" id="doenca" onchange="verificarOutraDoenca()">
+                <option value="">Selecione...</option>
+                <option value="Nenhuma">Nenhuma</option>
+                <option value="Diabetes">Diabetes</option>
+                <option value="Hipertensão">Hipertensão</option>
+                <option value="HIV">HIV</option>
+                <option value="Hepatite">Hepatite</option>
+                <option value="Tuberculose">Tuberculose</option>
+                <option value="Outra">Outra</option>
+            </select>
+            <input type="text" name="outra_doenca" id="outra-doenca" class="hidden" placeholder="Informe qual doença">
+
+            <!-- Data e Sexo -->
+            <div class="dois">
+                <input type="text" name="data" placeholder="Data de Nascimento" maxlength="10" oninput="aplicarMascaraData(this)" required>
+                <div class="input-wrapper">
+                <div class="sexo">
+                    <input type="radio" value="Masculino" id="txtSexo" name="txtSexo" required>Masc.
+                    <input type="radio" value="Feminino" id="txtSexo" name="txtSexo" required>Fem.
+                </div>
+                </div>
+            </div>
+
+            <!-- Botões -->
+            <div class="btn-group">
+                <button type="button" onclick="history.back()">Voltar</button>
+                <button type="submit">Avançar</button>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- Script JS para mostrar campo "outra doença" -->
+    <script>
+
+        function verificarOutraDoenca() {
+            const select = document.getElementById('doenca');
+            const outraInput = document.getElementById('outra-doenca');
+            if (select.value === 'Outra') {
+                outraInput.classList.remove('hidden');
+                outraInput.required = true;
+            } else {
+                outraInput.classList.add('hidden');
+                outraInput.required = false;
+            }
+        }
+
+        function aplicarMascaraRG(input) {
+            let valor = input.value.replace(/\D/g, '');
+            if (valor.length <= 9) {
+                input.value = valor.replace(/(\d{2})(\d{3})(\d{3})(\d{1})/, '$1.$2.$3-$4');
+            }
+        }
+
+        function aplicarMascaraCPF(input) {
+            let valor = input.value.replace(/\D/g, ''); 
+            if (valor.length <= 11) {
+                input.value = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1})/, '$1.$2.$3-$4');
+            }
+        }
+
+        function aplicarMascaraCEP(input) {
+            let valor = input.value.replace(/\D/g, '');
+            if (valor.length <= 8) {
+                input.value = valor.replace(/(\d{5})(\d{3})/, '$1-$2');
+            }
+        }
+
+        function aplicarMascaraData(input) {
+            let valor = input.value.replace(/\D/g, '');
+            if (valor.length <= 2) {
+                input.value = valor.replace(/(\d{1,2})/, '$1');
+            } else if (valor.length <= 4) {
+                input.value = valor.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+            } else if (valor.length <= 8) {
+                input.value = valor.replace(/(\d{2})(\d{2})(\d{1,4})/, '$1/$2/$3');
+            }
+        }
+
+  </script>
+
+</body>
+
+</html>

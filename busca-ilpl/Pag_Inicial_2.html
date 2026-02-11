@@ -1,0 +1,138 @@
+<!doctype html>
+
+<html>
+    
+    <head>
+        <title>Busca ILPI / Inicial</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="styles_inicial_2.css">
+
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const toggleButton = document.getElementById('sidebarToggle');
+            const closeButton = document.getElementById('sidebarClose');
+
+            // Abrir o sidebar
+            toggleButton.addEventListener('click', function () {
+              sidebar.classList.add('active');
+              overlay.classList.add('active');
+            });
+
+            // Fechar o sidebar com o botão "X"
+            closeButton.addEventListener('click', function () {
+              sidebar.classList.remove('active');
+              overlay.classList.remove('active');
+            });
+
+            // Fechar o sidebar clicando fora dele (no overlay)
+            overlay.addEventListener('click', function () {
+              sidebar.classList.remove('active');
+              overlay.classList.remove('active');
+            });
+          });
+        </script>
+    </head>
+
+    <body>
+
+  <!-- Header baseado na página inicial -->
+  <header>
+    <div class="header-container">
+      <img src="Logo-Tipo.png" width="25px" alt="Logo">
+      <div class="menu">
+        <button id="sidebarToggle" class="sidebar-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Barra lateral -->
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <button id="sidebarClose" class="sidebar-close">&times;</button>
+    </div>
+    <div class="sidebar-content">
+      <nav>
+        <ul>         
+          <li><a href="Pag_Inicial_2.html" class="active">Página Inicial</a></li>
+          <li><a href="Pequisa.html">Pesquisa</a></li>
+          <li><a href="Dados.php">Dados</a></li>
+          <br/><br/><br/>
+          <li><a href="logout.php">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Overlay para quando a barra lateral estiver aberta -->
+  <div id="overlay" class="overlay"></div>
+
+        <div id="bem-vindo">
+            <img src="Muito_bacana_resolucao_4x.png" alt="Banner" class="banner-img" />
+            <div id="borda">
+                <fieldset>
+                <h2>Seja Bem-Vindo ao</h2><br />
+                <h1>Busca ILPI</h1><br />
+                </fieldset>
+            </div>
+        </div>
+
+
+        <div id="titulo">
+            Encontrar o lar ideal nunca foi tão fácil!
+        </div>
+
+        <div id="paragrafos">
+            <div class="linha1">
+                <div id="ft1">
+                    <img src="Lar-dos-Idosos.jpg">
+
+                    <p>
+                    Encontrar o lar ideal para quem você ama não precisa ser difícil. O Busca ILPL nasceu com a missão de facilitar essa 
+                    escolha tão importante, conectando famílias a lares de idosos que oferecem conforto, cuidado e qualidade de vida.
+                    </p>
+                    <br/>
+                </div>
+
+                <div id="ft2">
+                    <img src="costas.jpg">
+                    
+                    <p>
+                    Nosso site reúne em um só lugar diversas opções de residenciais para idosos em todo o Brasil. Com uma plataforma intuitiva 
+                    e transparente, você pode pesquisar, comparar e escolher o local que melhor atende às necessidades da sua família — tudo de 
+                    forma simples, rápida e segura.
+                    </p>
+                    
+                </div>
+
+                <div id="ft3">
+                    <img src="ajudando.jpg">
+
+                    <p>
+                    Aqui você encontra informações detalhadas, como estrutura, tipos de atendimento, disponibilidade de profissionais especializados, 
+                    fotos reais, avaliações de outras famílias e valores atualizados. Também pode filtrar por localização, preço, perfil do idoso e 
+                    nível de cuidado necessário.
+                    </p>
+                </div>
+            </div>
+
+            <div id="ft4">
+                <img src="pai-filha.jpg">
+
+                <p>
+                Mais do que um site, o BemViver Lar é um ponto de apoio para quem busca tranquilidade nesse momento delicado. Nosso compromisso 
+                é com a dignidade e bem-estar de quem já viveu tanto — e merece seguir vivendo com acolhimento, carinho e segurança.
+                </p>
+             </div>
+            
+        </div>
+
+        
+    </body>
+</html>
